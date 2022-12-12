@@ -14,8 +14,6 @@ const InputForm: React.FC = () => {
       params: { article }
     });
 
-    console.log(res.data.response);
-
     setLoading(false);
     setData(res.data.response);
   };
@@ -26,19 +24,29 @@ const InputForm: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="text-white">
-        <h1 className="text-4xl font-extrabold mb-2">Loading Response...</h1>
+      <div>
+        <div className="text-white flex items-center justify-center gap-3">
+          <h1 className="text-4xl font-extrabold mb-2">Loading...</h1>
+          <svg className="fill-white animate-spin" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" /><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" /></svg>
+        </div>
       </div>
     );
   }
 
   if (data !== '') {
-    return (
-      <div className="text-white">
-        <h1 className="text-4xl font-extrabold mb-2">Response</h1>
-        <p className="indent-10">{data}</p>
-      </div>
-    );
+    return loading
+      ? (
+        <div className="text-red-400">
+          <h1 className="text-4xl font-extrabold mb-2">An Error Occured</h1>
+          Please refresh your page and try again.
+        </div>
+      )
+      : (
+        <div className="text-white">
+          <h1 className="text-4xl font-extrabold mb-2">Response</h1>
+          <p className="indent-10">{data}</p>
+        </div>
+      );
   }
 
   return (
