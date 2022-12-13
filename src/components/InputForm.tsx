@@ -5,17 +5,24 @@ const InputForm: React.FC = () => {
   const [article, setArticle] = useState('');
   const [data, setData] = useState('');
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const submitArticle = async (event: React.FormEvent<HTMLFormElement>) => {
     setLoading(true);
     event.preventDefault();
 
-    const res = await axios.get('/api/gpt', {
-      params: { article }
-    });
+    try {
+      const res = await axios.get('/api/gpt', {
+        params: { article }
+      });
+
+      setData(res.data.response);
+    } catch (e) {
+      setData('');
+    }
 
     setLoading(false);
-    setData(res.data.response);
+    setSubmitted(true);
   };
 
   const onChange = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -33,18 +40,19 @@ const InputForm: React.FC = () => {
     );
   }
 
-  if (data !== '') {
-    return loading
-      ? (
-        <div className="text-red-400">
-          <h1 className="text-4xl font-extrabold mb-2">An Error Occured</h1>
-          Please refresh your page and try again.
-        </div>
-      )
-      : (
+  if (submitted) {
+    return data
+      ?
+      (
         <div className="text-white">
           <h1 className="text-4xl font-extrabold mb-2">Response</h1>
           <p className="indent-10">{data}</p>
+        </div>
+      )
+      : (
+        <div className="text-red-400 flex items-center flex-col">
+          <h1 className="text-4xl font-extrabold mb-2">An Error Occured</h1>
+          Please refresh your page and try again.
         </div>
       );
   }
@@ -53,7 +61,6 @@ const InputForm: React.FC = () => {
     <div className="max-w-xs my-2 overflow-hidden rounded shadow-lg text-white">
       <div className="px-6 py-4">
         <form className="flex flex-col" onSubmit={submitArticle} onChange={onChange} action="/api/gpt">
-          <h1></h1>
           <label htmlFor="name" className="mb-2 text-2xl font-extrabold">Article URL</label>
           <input
             className="mb-4 border-b-2 rounded-lg text-black p-2"
